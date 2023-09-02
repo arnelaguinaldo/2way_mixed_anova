@@ -2,12 +2,14 @@
 title: "Two-Way Mixed ANOVA"
 output: html_document
 author: 'Arnel Aguinaldo, PhD'
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r install,  message = FALSE, echo = FALSE}
 if(!require(tidyverse)){install.packages("tidyverse")}
 ```
-
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -16,9 +18,13 @@ library(tidyverse)
 
 ## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+This is an R Markdown document. Markdown is a simple formatting syntax
+for authoring HTML, PDF, and MS Word documents. For more details on
+using R Markdown see <http://rmarkdown.rstudio.com>.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+When you click the **Knit** button a document will be generated that
+includes both content as well as the output of any embedded R code
+chunks within the document.
 
 ## The Effects of Low and High intensity Training on Cholesterol Concentration: A Randomized Controlled Trial
 
@@ -27,13 +33,54 @@ When you click the **Knit** button a document will be generated that includes bo
 dat <- read_csv("randomized_control_trial_cholesterol_data.csv")
 ```
 
-The two-way mixed ANOVA compares the mean differences between groups that have been split on two independent variables. The primary purpose of a two-way mixed ANOVA is to understand if there is an interaction between the two independent variables on the dependent variable. The two-way mixed ANOVA is often used to determine whether there are differences between independent groups over time such as in a **randomized controlled trial** (RCT) where mulitple groups are tested a number of times over a period of time (i.e., training vs control at pre and post season). In ANOVA terminology, the independent variables are normally called "factors." A two-way mixed ANOVA has one between-subjects factor (i.e., group) and one within-subjects factor.
+The two-way mixed ANOVA compares the mean differences between groups
+that have been split on two independent variables. The primary purpose
+of a two-way mixed ANOVA is to understand if there is an interaction
+between the two independent variables on the dependent variable. The
+two-way mixed ANOVA is often used to determine whether there are
+differences between independent groups over time such as in a
+**randomized controlled trial** (RCT) where mulitple groups are tested a
+number of times over a period of time (i.e., training vs control at pre
+and post season). In ANOVA terminology, the independent variables are
+normally called "factors." A two-way mixed ANOVA has one
+between-subjects factor (i.e., group) and one within-subjects factor.
 
-A between-subjects factor and a within-subjects factor are independent variables, but whereas a between-subjects factor has independent groups (e.g., gender: male/female), a within-subjects factor has related groups (also known as repeated measures), such as time (e.g., pre- and post-intervention). The primary purpose of carrying out a two-way mixed ANOVA is to understand if there is a two-way interaction (i.e., an interaction between the between-subjects and within-subjects factors). This ascertains whether the effect of one of the factors is dependent on the value of the other factor. For example, you might want to understand if blood cholesterol concentration changes over time (e.g., 0, 3 and 6 months) if one embarks on an exercise-training programme of either low, moderate or high intensity. Importantly, you would usually want to know if blood cholesterol concentration changed differently over time depending on which exercise-training programme was performed (e.g., either the low, moderate or high intensity exercise-training programme). Understanding the latter requires the analysis of the two-way interaction effect. In essence, the two-way mixed ANOVA allows you to distinguish between the effects of different exercise-training interventions over time.
+A between-subjects factor and a within-subjects factor are independent
+variables, but whereas a between-subjects factor has independent groups
+(e.g., gender: male/female), a within-subjects factor has related groups
+(also known as repeated measures), such as time (e.g., pre- and
+post-intervention). The primary purpose of carrying out a two-way mixed
+ANOVA is to understand if there is a two-way interaction (i.e., an
+interaction between the between-subjects and within-subjects factors).
+This ascertains whether the effect of one of the factors is dependent on
+the value of the other factor. For example, you might want to understand
+if blood cholesterol concentration changes over time (e.g., 0, 3 and 6
+months) if one embarks on an exercise-training programme of either low,
+moderate or high intensity. Importantly, you would usually want to know
+if blood cholesterol concentration changed differently over time
+depending on which exercise-training programme was performed (e.g.,
+either the low, moderate or high intensity exercise-training programme).
+Understanding the latter requires the analysis of the two-way
+interaction effect. In essence, the two-way mixed ANOVA allows you to
+distinguish between the effects of different exercise-training
+interventions over time.
 
-**Scenario**: A researcher was interested in discovering whether the intensity of an exercise-training programme, but with equal calorific expenditure, had an effect on cholesterol concentration over a six-month period. To answer this they implemented three different interventions. In one intervention, participants did not change their current sedentary lifestyle; this was the "control" intervention (group 0). In group 1, participants underwent a low-intensity exercise-training programme that expended 1000 kCal per week. Group 2 underwent a high-intensity exercise-training programme that also expended 1000 kCal per week (but, therefore, exercised for less total time). The participants in each intervention were different and all interventions lasted six months. Cholesterol concentration was measured three times: at the beginning, midway and at the end of the interventions.
+**Scenario**: A researcher was interested in discovering whether the
+intensity of an exercise-training programme, but with equal calorific
+expenditure, had an effect on cholesterol concentration over a six-month
+period. To answer this they implemented three different interventions.
+In one intervention, participants did not change their current sedentary
+lifestyle; this was the "control" intervention (group 0). In group 1,
+participants underwent a low-intensity exercise-training programme that
+expended 1000 kCal per week. Group 2 underwent a high-intensity
+exercise-training programme that also expended 1000 kCal per week (but,
+therefore, exercised for less total time). The participants in each
+intervention were different and all interventions lasted six months.
+Cholesterol concentration was measured three times: at the beginning,
+midway and at the end of the interventions.
 
-**Question**: What are the independent and dependent variables? What are the research questions and the null hypotheses in this scenario?
+**Question**: What are the independent and dependent variables? What are
+the research questions and the null hypotheses in this scenario?
 
 **Variable Names**
 
@@ -43,7 +90,11 @@ You can check out the exact variable names:
 names(dat)
 ```
 
-Let us prepare the data in the dataset for analysis. The original file is set up in "wide" format, meaning the repeated measures of the dependent variables are in their own respective columns. The dataset will be converted to "long" format so that `time` is its own factor. This converted dataset will be saved in the `dat_long` data vector:
+Let us prepare the data in the dataset for analysis. The original file
+is set up in "wide" format, meaning the repeated measures of the
+dependent variables are in their own respective columns. The dataset
+will be converted to "long" format so that `time` is its own factor.
+This converted dataset will be saved in the `dat_long` data vector:
 
 ```{r}
 # define IVs as factors
@@ -70,7 +121,8 @@ dat_long$time <- relevel(dat_long$time, "pre")
 cho <- dat_long$cho
 ```
 
-Next, we can calculate summary statistics for cholesterol by group and time:
+Next, we can calculate summary statistics for cholesterol by group and
+time:
 
 ```{r}
 sum <- dat_long %>%
@@ -86,18 +138,41 @@ We can generate a plot of the dependent variable by group and time.
 
 ```{r}
 # plot mean cholesterol values at each time point for each exercise group
-ggplot(sum, aes(x = time, y = mean, color=group, group=group)) +
+cho.plot <- ggplot(sum, aes(x = time, y = mean, color=group, group=group)) +
   geom_point() +
   geom_line() +
   ggtitle("Cholesterol Concentration") +
   theme(plot.title = element_text(hjust = 0.5))
+cho.plot
 ```
 
-From the plot above you can see that the three lines are not parallel and some lines do in fact cross one another. On closer examination, it would appear that participants in the control group (the red line) maintained a similar, but declining, mean cholesterol concentration over time. On the other hand, the low-intensity exercise-training group (the green line) maintained a similar, but declining, mean cholesterol concentration (a slight reduction after three months), but then a more significant decline in mean cholesterol concentration from the mid to post time point. The most pronounced effect on mean cholesterol concentration was experienced with the high-intensity exercise-training group (the blue line) with a large decline in mean cholesterol concentration at both time points (i.e., midway and post intervention). It would appear that the different groups have different patterns of mean cholesterol concentration over time. As such, from these results, it would appear that we might expect to find an interaction effect.
+From the plot above you can see that the three lines are not parallel
+and some lines do in fact cross one another. On closer examination, it
+would appear that participants in the control group (the red line)
+maintained a similar, but declining, mean cholesterol concentration over
+time. On the other hand, the low-intensity exercise-training group (the
+green line) maintained a similar, but declining, mean cholesterol
+concentration (a slight reduction after three months), but then a more
+significant decline in mean cholesterol concentration from the mid to
+post time point. The most pronounced effect on mean cholesterol
+concentration was experienced with the high-intensity exercise-training
+group (the blue line) with a large decline in mean cholesterol
+concentration at both time points (i.e., midway and post intervention).
+It would appear that the different groups have different patterns of
+mean cholesterol concentration over time. As such, from these results,
+it would appear that we might expect to find an interaction effect.
 
-Despite the usefulness of profile plots in understanding your data, you cannot determine an interaction effect from them because the profile plot is based on the sample data and we are interested in determining whether there is an interaction effect in the *population*. Therefore, a formal statistical test is required to test for the presence of an interaction effect (i.e., via statistical significance testing).
+Despite the usefulness of profile plots in understanding your data, you
+cannot determine an interaction effect from them because the profile
+plot is based on the sample data and we are interested in determining
+whether there is an interaction effect in the *population*. Therefore, a
+formal statistical test is required to test for the presence of an
+interaction effect (i.e., via statistical significance testing).
 
-In this case, we will use the following code to perform a two-way mixed ANOVA, which determines whether there is a two-way interaction between the between- and within-subjects factors (i.e., a group*time interaction).
+In this case, we will use the following code to perform a two-way mixed
+ANOVA, which determines whether there is a two-way interaction between
+the between- and within-subjects factors (i.e., a group\*time
+interaction).
 
 ```{r}
 # two-way ANOVA (factors are group and time)
@@ -105,23 +180,42 @@ anova <- aov(cho ~ group*time + Error(ID/time), dat_long)
 summary(anova)
 ```
 
-The row labeled by `group:time` shows whether or not there is a significant interaction between the between- and within-subjects factors. Since F(4, 84) = 107.8, *p* < 0.001, it can be concluded that there is a significant interaction between training and time on cholesterol concentration. An APA formatted statements can be simply worded as follows:
+The row labeled by `group:time` shows whether or not there is a
+significant interaction between the between- and within-subjects
+factors. Since F(4, 84) = 107.8, *p* \< 0.001, it can be concluded that
+there is a significant interaction between training and time on
+cholesterol concentration. An APA formatted statements can be simply
+worded as follows:
 
-**There was a statistically significant interaction between the intervention and time on cholesterol concentration, F(4, 84) = 107.77, *p* < .001**
+**There was a statistically significant interaction between the
+intervention and time on cholesterol concentration, F(4, 84) = 107.77,
+*p* \< .001**
 
-The last part of the statement above, F(4, 84) = 107.77, p < .001 has the following meaning:
+The last part of the statement above, F(4, 84) = 107.77, p \< .001 has
+the following meaning:
 
-* F - indicates that we are comparing to an *F*-distribution
-* 4 in (4, 84) - degrees of freedom for the interaction term, which is calculated as (k-1) x (r-1) where k = number of groups and r = number of repeated tests
-* 84 in (4, 84) - degrees of freedom of the within-subjects residuals (error), which is calculated as (n-1)*(r-1) where n = sample size
-* 107.77 - F-value (ratio of true variance/error variance)
-* p < .001 - probability of obtaining the observed F-value given the null hypothesis is true.
+-   F - indicates that we are comparing to an *F*-distribution
+-   4 in (4, 84) - degrees of freedom for the interaction term, which is
+    calculated as (k-1) x (r-1) where k = number of groups and r =
+    number of repeated tests
+-   84 in (4, 84) - degrees of freedom of the within-subjects residuals
+    (error), which is calculated as (n-1)\*(r-1) where n = sample size
+-   107.77 - F-value (ratio of true variance/error variance)
+-   p \< .001 - probability of obtaining the observed F-value given the
+    null hypothesis is true.
 
-**Question**: What can you conclude about the differences in cholesterol between training groups across time?
+**Question**: What can you conclude about the differences in cholesterol
+between training groups across time?
 
 ## Procedure for a Significant Interaction
 
-When you have a statistically significant interaction, reporting the main effects can be misleading and you will want to determine the difference between groups at each category of time and vice versa, called simple main effects. You can run simple main effects using syntax in R. Basically, you will run separate one-way ANOVAs and one-way repeated measures ANOVAs to determine the main effects of training `group` and `time`, respectively, on cholesterol concentration.
+When you have a statistically significant interaction, reporting the
+main effects can be misleading and you will want to determine the
+difference between groups at each category of time and vice versa,
+called simple main effects. You can run simple main effects using syntax
+in R. Basically, you will run separate one-way ANOVAs and one-way
+repeated measures ANOVAs to determine the main effects of training
+`group` and `time`, respectively, on cholesterol concentration.
 
 ```{r}
 # simple main effects ANOVAs (one-way ANOVA) between groups at each time point
@@ -136,116 +230,197 @@ control_av <- aov(cho ~ time + Error(ID/time), subset(dat_long, dat_long$group =
 low_av <-  aov(cho ~ time + Error(ID/time), subset(dat_long, dat_long$group == "1"))
 high_av <- aov(cho ~ time + Error(ID/time), subset(dat_long, dat_long$group == "2"))
 ```
+
 Each of the above ANOVAs produces its own summary table.
 
 **Main effect of training intervention**
 
-Let's take a look at the results between training groups at each time point.
+Let's take a look at the results between training groups at each time
+point.
 
 First, for pre-intervention:
+
 ```{r}
 summary(pre_av)
 ```
 
 Next, for mid-intervention:
+
 ```{r}
 summary(mid_av)
 ```
 
 and post-intervention:
+
 ```{r}
 summary(post_av)
 ```
 
-You can see from the `group` row that there is a statistically significant difference in cholesterol concentration between interventions at both the mid- and post-intervention time points. You could write these results as:
+You can see from the `group` row that there is a statistically
+significant difference in cholesterol concentration between
+interventions at both the mid- and post-intervention time points. You
+could write these results as:
 
-**There was a statistically significant difference in cholesterol concentration between interventions at the mid-point of the intervention (F(2, 42) = 5.91, *p* = .005) as well as at post-intevention (F(2, 42) = 13.56, *p* < .001).**
+**There was a statistically significant difference in cholesterol
+concentration between interventions at the mid-point of the intervention
+(F(2, 42) = 5.91, *p* = .005) as well as at post-intevention (F(2, 42) =
+13.56, *p* \< .001).**
 
-Since there are more than two training groups, you can perform post-hoc tests to determine pairwise differences between groups:
+Since there are more than two training groups, you can perform post-hoc
+tests to determine pairwise differences between groups:
 
 ```{r}
 TukeyHSD(mid_av)
 
 TukeyHSD(post_av)
 ```
-Notice that the post-hoc tests were only performed on the mid and post-intervention data since the one-way ANOVAs above indicated significant differences between groups at these two time points only (i.e., not pre-intervention).
 
-**Question**: Based on these post-hoc tests, between which two training groups exhibited differences in cholesterol concentration at the mid-point of the intervention? What about at the post-intervention point?
+Notice that the post-hoc tests were only performed on the mid and
+post-intervention data since the one-way ANOVAs above indicated
+significant differences between groups at these two time points only
+(i.e., not pre-intervention).
+
+**Question**: Based on these post-hoc tests, between which two training
+groups exhibited differences in cholesterol concentration at the
+mid-point of the intervention? What about at the post-intervention
+point?
 
 **Main effect of time**
 
-Now let's take a look at the changes in cholesterol over time for each group.
+Now let's take a look at the changes in cholesterol over time for each
+group.
 
 First, for the control group (0):
+
 ```{r}
 summary(control_av)
 ```
 
 Next, for low-intensity group (1):
+
 ```{r}
 summary(low_av)
 ```
 
 and high-intensity group (2):
+
 ```{r}
 summary(high_av)
 ```
 
-We essentially performed three separate one-way repeated measures ANOVA, one per group. They show that all three groups experienced statistically significant changes in cholesterol across time. The results of the main effect of time can then be summarized as:
+We essentially performed three separate one-way repeated measures ANOVA,
+one per group. They show that all three groups experienced statistically
+significant changes in cholesterol across time. The results of the main
+effect of time can then be summarized as:
 
-**There was a statistically significant changes in cholesterol concentration for the control group (F(2, 28) = 15.4, *p* < .001), low-intensity exercise group (F(2, 28) = 74.96, *p* < .001), and high-intensity group (F(2, 28) = 487.1, *p* < .001).**
+**There was a statistically significant changes in cholesterol
+concentration for the control group (F(2, 28) = 15.4, *p* \< .001),
+low-intensity exercise group (F(2, 28) = 74.96, *p* \< .001), and
+high-intensity group (F(2, 28) = 487.1, *p* \< .001).**
 
-As there are three time points, a follow-up test is needed to determine the time points between which the dependent variable changes for each training group. With repeated measures, a Tukey post-hoc test cannot be used since it assumes that independent groups are in each level of the independent variable. Rather, we use a paired t-test adjusted for multiple comparisons for each group:
+As there are three time points, a follow-up test is needed to determine
+the time points between which the dependent variable changes for each
+training group. With repeated measures, a Tukey post-hoc test cannot be
+used since it assumes that independent groups are in each level of the
+independent variable. Rather, we use a paired t-test adjusted for
+multiple comparisons for each group:
 
 ```{r}
 group0 <- subset(dat_long, dat_long$group == "0")
 pairwise.t.test(group0$cho, group0$time, paired = TRUE, p.adjust.method = "bonferroni")
 ```
-This pairwise comparison indicates that for the control group, there was not a statistically significant change in cholesterol from the pre- to the mid-intervention time points (*p* = 0.270) but there were signficant changes in cholesterol from pre to post-intervention (*p* = .002) and from mid- to post-intervention (*p* = .005).
 
-Now, let's take a look at changes in cholesterol in the low-intensity group (1):
+This pairwise comparison indicates that for the control group, there was
+not a statistically significant change in cholesterol from the pre- to
+the mid-intervention time points (*p* = 0.270) but there were signficant
+changes in cholesterol from pre to post-intervention (*p* = .002) and
+from mid- to post-intervention (*p* = .005).
+
+Now, let's take a look at changes in cholesterol in the low-intensity
+group (1):
+
 ```{r}
 group1 <- subset(dat_long, dat_long$group == "1")
 pairwise.t.test(group1$cho, group1$time, paired = TRUE, p.adjust.method = "bonferroni")
 ```
 
-For the low-intensity group, you might report the results in APA format as:
+For the low-intensity group, you might report the results in APA format
+as:
 
-**For the low-intensity exercise group, cholesterol concentration was not statistically significantly different between pre-intervention and midway time points (M = 0.07, SE = 0.04 mmol/L, p = .277), but cholesterol concentration was statistically significantly reduced at post-intervention compared to pre-intervention (M = 0.40, SE = 0.04 mmol/L, p < .001) and at post-intervention compared to mid-way (M = 0.33, SE = 0.03 mmol/L, p < .001).**
+**For the low-intensity exercise group, cholesterol concentration was
+not statistically significantly different between pre-intervention and
+midway time points (M = 0.07, SE = 0.04 mmol/L, p = .277), but
+cholesterol concentration was statistically significantly reduced at
+post-intervention compared to pre-intervention (M = 0.40, SE = 0.04
+mmol/L, p \< .001) and at post-intervention compared to mid-way (M =
+0.33, SE = 0.03 mmol/L, p \< .001).**
 
-Finally, let's take a look at changes in cholesterol in the high-intensity group (2):
+Finally, let's take a look at changes in cholesterol in the
+high-intensity group (2):
+
 ```{r}
 group2 <- subset(dat_long, dat_long$group == "2")
 pairwise.t.test(group2$cho, group2$time, paired = TRUE, p.adjust.method = "bonferroni")
 ```
 
-**Question**: What can you conclude about the changes in cholesterol in the high-intensity group based on this pairwise comparison?
+**Question**: What can you conclude about the changes in cholesterol in
+the high-intensity group based on this pairwise comparison?
 
-**Note**: If you do not have a statistically significant interaction, you need to interpret the main effects for the between-subjects (for all time points) and within-subjects (for all groups) factors. For example, to determine the differences between training groups, a one-way ANOVA can be performed on all measurements of the dependent variable, regardless of time. Likewise, a repeated-measures ANOVA can be performed across time points, regardless of training group. You would basically run a one-way ANOVA and a repeated measures ANOVA to determine the effects of the between- and within-subjects factors on the dependent variable.
+**Note**: If you do not have a statistically significant interaction,
+you need to interpret the main effects for the between-subjects (for all
+time points) and within-subjects (for all groups) factors. For example,
+to determine the differences between training groups, a one-way ANOVA
+can be performed on all measurements of the dependent variable,
+regardless of time. Likewise, a repeated-measures ANOVA can be performed
+across time points, regardless of training group. You would basically
+run a one-way ANOVA and a repeated measures ANOVA to determine the
+effects of the between- and within-subjects factors on the dependent
+variable.
 
 In conclusion, you can summarize these results as follows:
 
-**There was a statistically significant interaction between the intervention and time on cholesterol concentration (F(4, 84) = 107.77, *p* < .001). At the mid-point of the intervention, cholesterol concentration was statistically significantly greater in the control (5.99 +/- 0.60 mmol/l, *p* = .006) and in the low-intensity exercise group (5.82 +/- 0.60 mmol/l, *p* = .044) compared to the high-intensity exercise group (5.31 +/- 0.49 mmol/l). Cholesterol concentration in the low-intensity exercise group was not statistically significantly lower than the control group (*p* = .698). At post-intervention, cholesterol concentration was statistically significantly greater in the control (5.83 +/- 0.55 mmol/l, *p* < .001) and in the low-intensity exercise group (5.49 +/- 0.60 mmol/l, *p* = .004) compared to the high-intensity exercise group (4.80 +/- 0.50 mmol/l). Cholesterol concentration in the low-intensity exercise group was not statistically significantly lower than the control group (*p* = .222).**
-
+**There was a statistically significant interaction between the
+intervention and time on cholesterol concentration (F(4, 84) = 107.77,
+*p* \< .001). At the mid-point of the intervention, cholesterol
+concentration was statistically significantly greater in the control
+(5.99 +/- 0.60 mmol/l, *p* = .006) and in the low-intensity exercise
+group (5.82 +/- 0.60 mmol/l, *p* = .044) compared to the high-intensity
+exercise group (5.31 +/- 0.49 mmol/l). Cholesterol concentration in the
+low-intensity exercise group was not statistically significantly lower
+than the control group (*p* = .698). At post-intervention, cholesterol
+concentration was statistically significantly greater in the control
+(5.83 +/- 0.55 mmol/l, *p* \< .001) and in the low-intensity exercise
+group (5.49 +/- 0.60 mmol/l, *p* = .004) compared to the high-intensity
+exercise group (4.80 +/- 0.50 mmol/l). Cholesterol concentration in the
+low-intensity exercise group was not statistically significantly lower
+than the control group (*p* = .222).**
 
 ## Resources for learning R and working in RStudio
 
-That was a short introduction to R and RStudio, but we will provide you with more
-functions and a more complete sense of the language as the course progresses. You 
-might find the following tips and resources helpful.
+That was a short introduction to R and RStudio, but we will provide you
+with more functions and a more complete sense of the language as the
+course progresses. You might find the following tips and resources
+helpful.
 
-- In this course we will be using the `dplyr` (for data wrangling) and `ggplot2` (for 
-data visualization) extensively. If you are googling for R code, make sure
-to also include these package names in your search query. For example, instead
-of googling "scatterplot in R", google "scatterplot in R with ggplot2".
+-   In this course we will be using the `dplyr` (for data wrangling) and
+    `ggplot2` (for data visualization) extensively. If you are googling
+    for R code, make sure to also include these package names in your
+    search query. For example, instead of googling "scatterplot in R",
+    google "scatterplot in R with ggplot2".
 
-- The following cheathseets may come in handy throughout the course. Note that some 
-of the code on these cheatsheets may be too advanced for this course, however 
-majority of it will become useful as you progress through the course material.
-    - [Data wrangling cheatsheet](http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
-    - [Data visualization cheatsheet](http://www.rstudio.com/wp-content/uploads/2015/12/ggplot2-cheatsheet-2.0.pdf)
-    - [R Markdown](http://www.rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf)
+-   The following cheathseets may come in handy throughout the course.
+    Note that some of the code on these cheatsheets may be too advanced
+    for this course, however majority of it will become useful as you
+    progress through the course material.
 
-- While you will get plenty of exercise working with these packages in the labs of 
-this course, if you would like further opportunities to practice we recommend 
-checking out the relevant courses at [DataCamp](https://www.datacamp.com/courses).
+    -   [Data wrangling
+        cheatsheet](http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
+    -   [Data visualization
+        cheatsheet](http://www.rstudio.com/wp-content/uploads/2015/12/ggplot2-cheatsheet-2.0.pdf)
+    -   [R
+        Markdown](http://www.rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf)
+
+-   While you will get plenty of exercise working with these packages in
+    the labs of this course, if you would like further opportunities to
+    practice we recommend checking out the relevant courses at
+    [DataCamp](https://www.datacamp.com/courses).
